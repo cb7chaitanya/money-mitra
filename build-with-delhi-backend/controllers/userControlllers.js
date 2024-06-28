@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken'
-import { User } from '../models/user.js'
+import User from '../models/user.js'
 import { jwtSecret } from '../conf.js'
 import mongoose from 'mongoose'
 import { mongoUrl } from '../conf.js'
@@ -26,8 +26,10 @@ export const signup = async (req, res) => {
             token: jwt.sign({ userId: user._id }, jwtSecret)
         })
     } catch (error) {
-        console.log(error)
-        return;
+        res.status(500)
+        return res.json({
+            message: `Server Error: ${error}`
+        })
     }
 }
 
@@ -58,8 +60,10 @@ export const signin = async (req, res) => {
                 message: 'User not found!!!'
             })
         }
-    } catch(err){
-        console.log(err)
-        return;
+    } catch(error){
+        res.status(500)
+        return res.json({
+            message: `Server Error: ${error}`
+        })
     }
 }
