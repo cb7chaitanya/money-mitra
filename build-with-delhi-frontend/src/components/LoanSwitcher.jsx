@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import Button from './Button'
+import { BASE_URL } from '../../config/conf';
 const LoanFilterSidebar = ({ onLoansFetched }) => {
   const [filters, setFilters] = useState({
     loanType: '',
@@ -27,7 +28,7 @@ const LoanFilterSidebar = ({ onLoansFetched }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.get('/api/loans', { params: filters });
+      const response = await axios.get(`${BASE_URL}/loans/filter`, { params: filters });
       onLoansFetched(response.data.loans);
     } catch (error) {
       console.error('Error fetching loans:', error);

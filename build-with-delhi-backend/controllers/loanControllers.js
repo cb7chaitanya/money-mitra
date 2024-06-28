@@ -4,10 +4,7 @@ import { calculateRank, updateLoanValues } from "./utils/loanHelpers.js"
 
 export const getAllLoans = async (req, res) => {
     try {
-        const loans = await Loan.find({}).populate({
-            path: 'bank',
-            select: 'name'
-        }).sort({
+        const loans = await Loan.find({}).populate('bank').sort({
             rank: "asc"
         })
 
