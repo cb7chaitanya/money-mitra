@@ -131,9 +131,6 @@ export const filterLoans = async(req, res) => {
         if(req.query.minInterestRate) {
             query.InterestRate = {...query.interestRate, $gte: Number(req.query.minInterestRate)}
         }
-        if (req.query.minInterestRate) {
-            query.interestRate = { ...query.interestRate, $gte: Number(req.query.minInterestRate) };
-        }
         if (req.query.maxInterestRate) {
             query.interestRate = { ...query.interestRate, $lte: Number(req.query.maxInterestRate) };
         }

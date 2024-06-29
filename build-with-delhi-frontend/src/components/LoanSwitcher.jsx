@@ -2,19 +2,13 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import Button from './Button'
 import { BASE_URL } from '../../config/conf';
+import { useSetRecoilState } from 'recoil';
+import { loansAtom } from '../store/atoms/loans';
+
 const LoanFilterSidebar = ({ onLoansFetched }) => {
   const [filters, setFilters] = useState({
-    loanType: '',
-    minInterestRate: '',
-    maxInterestRate: '',
-    minLoanAmount: '',
-    maxLoanAmount: '',
-    minTenure: '',
-    maxTenure: '',
-    minProcessingFee: '',
-    maxProcessingFee: ''
   });
-
+  const setLoans = useSetRecoilState(loansAtom)
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const handleChange = (e) => {
@@ -28,8 +22,9 @@ const LoanFilterSidebar = ({ onLoansFetched }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.get(`${BASE_URL}/loans/filter`, { params: filters });
+      const response = await axios.get(`${BASE_URL}/loan/loans/filter`, { params: filters });
       onLoansFetched(response.data.loans);
+      setLoans(response.data.loans)
     } catch (error) {
       console.error('Error fetching loans:', error);
     }
@@ -42,10 +37,10 @@ const LoanFilterSidebar = ({ onLoansFetched }) => {
   return (
     <div>
       <button 
-        className="p-4 text-white" 
+        className="p-2 md:p-4 text-white" 
         onClick={toggleSidebar}
       >
-        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <svg className="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"></path>
         </svg>
       </button>
@@ -155,4 +150,4 @@ const LoanFilterSidebar = ({ onLoansFetched }) => {
   );
 };
 
-export default LoanFilterSidebar;
+export default LoanFilterSidebar
