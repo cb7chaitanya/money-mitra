@@ -1,4 +1,5 @@
-import { API_KEY } from "../conf";
+import { API_KEY } from "../conf.js";
+import axios from 'axios'
 const fetchData = async (url) => {
     try {
       const response = await axios.get(url);
