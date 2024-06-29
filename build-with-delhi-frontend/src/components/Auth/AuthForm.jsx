@@ -1,7 +1,9 @@
 import React, { useState } from 'react'
 import { toast } from 'react-toastify'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import Input from '../Input'
+import { BASE_URL } from '../../../config/conf'
+import axios from 'axios'
 
 const AuthForm = ({type}) => {
 
@@ -10,18 +12,16 @@ const AuthForm = ({type}) => {
         password: "",
         email: ""
     })
-
+    const navigate = useNavigate()
     const handleSubmit = async() => {
         try{
-            const response = postInputs
+            const response = await axios.post(`${BASE_URL}/user/${type}`, postInputs)
             console.log(response)
-            setPostInputs({
-                name: "",
-                password: "",
-                email: ""
-            })
+            const jwt = response.data.token
+            localStorage.setItem("Authorization", `Bearer ${jwt}`)
+            navigate('/dashboard')
         } catch(error) {
-            toast.error("Something went wrong")
+            console.error(error)
         }   
     }
   return (
