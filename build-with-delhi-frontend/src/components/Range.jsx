@@ -6,7 +6,7 @@ const Range = (props) => {
     <div className="form-group">
         <div className='flex justify-between'>
             <label className="block mb-1 font-semibold">{props.label}</label>
-            <div className='bg-zinc-800 p-1 font-semibold'>
+            <div className='bg-zinc-800 p-1 font-semibold rounded-lg'>
               {`${props.value} ${props.unit}`}
             </div>
         </div>

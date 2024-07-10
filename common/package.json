@@ -1,7 +1,8 @@
 {
-  "name": "common",
-  "version": "1.0.0",
+  "name": "@cb7chaitanya/build-with-delhi-common",
+  "version": "1.0.2",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -11,5 +12,8 @@
   "description": "",
   "dependencies": {
     "zod": "^3.23.8"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

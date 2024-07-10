@@ -39,9 +39,10 @@ A personalized dashboard where users can easily choose between loan applications
 
 ## Technology Stack
 
-- **Frontend:** React and tailwind css for creating a responsive and user-friendly interface.
+- **Frontend:** React, Recoil and Tailwind CSS for creating a responsive and user-friendly interface.
 - **Backend:** Node.js with the Express framework to build a robust server and RESTful APIs.
-- **Database:** MongoDB (NoSQL) for efficient data storage and retrieval.
+- **External API:** Utilising Vantage API for fetching Stock Information.
+- **Database:** MongoDB (NoSQL) for efficient data storage and retrieval of loan information.
 - **Development Tools:** GitHub for version control and repository management.
 
 We are open to incorporating additional technologies that can enhance the functionality and performance of Money Mitra.

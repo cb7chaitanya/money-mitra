@@ -3,6 +3,8 @@ import User from '../models/user.js'
 import { jwtSecret } from '../conf.js'
 import mongoose from 'mongoose'
 import { mongoUrl } from '../conf.js'
+import bcrypt from 'bcrypt'
+import {signUpSchema, signInSchema} from '@cb7chaitanya/build-with-delhi-common'
 
 mongoose.connect(mongoUrl).then(() => {
     console.log('Database connected')
@@ -14,6 +16,13 @@ mongoose.connect(mongoUrl).then(() => {
 export const signup = async (req, res) => {
     const { name, email, password } = req.body
     try{
+        const { success } = signUpSchema.safeParse(req.body)
+        if(!success) {
+            return res.status(411).json({
+                message: 'Invalid inputs'
+            })
+        }
+        const hashedPassword = await bcrypt.hash(password, 10)
         const isExisting = await User.findOne({email: email})
         if(isExisting){
             res.status(400)
@@ -21,7 +30,11 @@ export const signup = async (req, res) => {
                 message: 'User already exists'
             })
         }
-        const user = await User.create({ name, email, password })
+        const user = await User.create({ 
+            name: name, 
+            email: email, 
+            password: hashedPassword
+         })
         return res.json({
             token: jwt.sign({ userId: user._id }, jwtSecret)
         })
@@ -36,13 +49,19 @@ export const signup = async (req, res) => {
 export const signin = async (req, res) => {
     const { email, password } = req.body
     try {
+        const { success } = signInSchema.safeParse(req.body)
+        if(!success) {
+            return res.status(411).json({
+                message: 'Invalid inputs'
+            })
+        }
         const isAlreadyUser = await User.findOne({
             email: email
         })
         if(isAlreadyUser) {
-            if(isAlreadyUser.password != password){
-                res.status(401)
-                return res.json({
+            const passwordMatch = await bcrypt.compare(password, isAlreadyUser.password)
+            if(!passwordMatch) {
+                return res.status(401).json({
                     message: 'Invalid Credentials!!!'
                 })
             }
