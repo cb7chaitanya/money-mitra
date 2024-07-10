@@ -2,27 +2,26 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import Button from './Button'
 import { BASE_URL } from '../../config/conf';
-import { useSetRecoilState } from 'recoil';
-import { loansAtom } from '../store/atoms/loans';
+import { useSetRecoilState, useRecoilValue } from 'recoil';
+import { loansAtom, updateFilterQuerySelctor } from '../store/atoms/loans';
+import Range from './Range';
 
 const LoanFilterSidebar = ({ onLoansFetched }) => {
-  const [filters, setFilters] = useState({
-  });
+  const filterQuery = useRecoilValue(updateFilterQuerySelctor)
+  const setFilterQuery = useSetRecoilState(updateFilterQuerySelctor)
   const setLoans = useSetRecoilState(loansAtom)
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFilters((prevFilters) => ({
-      ...prevFilters,
-      [name]: value
-    }));
+    const updatedFilter = { ...filterQuery, [name]: value };
+    setFilterQuery(updatedFilter);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.get(`${BASE_URL}/loan/loans/filter`, { params: filters });
+      const response = await axios.get(`${BASE_URL}/loan/loans/filter`, { params: filterQuery });
       onLoansFetched(response.data.loans);
       setLoans(response.data.loans)
     } catch (error) {
@@ -48,11 +47,12 @@ const LoanFilterSidebar = ({ onLoansFetched }) => {
         <h2 className="text-xl font-semibold mb-4 ">Filter Loans</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="form-group ">
-            <label className="block mb-1">Loan Type:</label>
+            <label className="block mb-1 font-semibold">Loan Type:</label>
             <select 
             name="loanType" 
-            value={filters.loanType} 
+            value={filterQuery.loanType} 
             onChange={handleChange} 
+            defaultValue={""}
             className="w-full p-2 border border-gray-300 rounded text-black"
             >
                 <option value="" disabled>Select Loan Type</option>
@@ -62,86 +62,14 @@ const LoanFilterSidebar = ({ onLoansFetched }) => {
             </select>
             
           </div>
-          <div className="form-group">
-            <label className="block mb-1">Min Interest Rate:</label>
-            <input 
-              type="number" 
-              name="minInterestRate" 
-              value={filters.minInterestRate} 
-              onChange={handleChange} 
-              className="w-full p-2 border text-black border-gray-300 rounded"
-            />
-          </div>
-          <div className="form-group">
-            <label className="block mb-1">Max Interest Rate:</label>
-            <input 
-              type="number" 
-              name="maxInterestRate" 
-              value={filters.maxInterestRate} 
-              onChange={handleChange} 
-              className="w-full p-2 border text-black border-gray-300 rounded"
-            />
-          </div>
-          <div className="form-group">
-            <label className="block mb-1">Min Loan Amount:</label>
-            <input 
-              type="number" 
-              name="minLoanAmount" 
-              value={filters.minLoanAmount} 
-              onChange={handleChange} 
-              className="w-full p-2 border text-black border-gray-300 rounded"
-            />
-          </div>
-          <div className="form-group">
-            <label className="block mb-1">Max Loan Amount:</label>
-            <input 
-              type="number" 
-              name="maxLoanAmount" 
-              value={filters.maxLoanAmount} 
-              onChange={handleChange} 
-              className="w-full p-2 border text-black border-gray-300 rounded"
-            />
-          </div>
-          <div className="form-group">
-            <label className="block mb-1">Min Tenure:</label>
-            <input 
-              type="number" 
-              name="minTenure" 
-              value={filters.minTenure} 
-              onChange={handleChange} 
-              className="w-full p-2 border text-black border-gray-300 rounded"
-            />
-          </div>
-          <div className="form-group">
-            <label className="block mb-1">Max Tenure:</label>
-            <input 
-              type="number" 
-              name="maxTenure" 
-              value={filters.maxTenure} 
-              onChange={handleChange} 
-              className="w-full p-2 border text-black border-gray-300 rounded"
-            />
-          </div>
-          <div className="form-group">
-            <label className="block mb-1">Min Processing Fee:</label>
-            <input 
-              type="number" 
-              name="minProcessingFee" 
-              value={filters.minProcessingFee} 
-              onChange={handleChange} 
-              className="w-full p-2 border text-black border-gray-300 rounded"
-            />
-          </div>
-          <div className="form-group">
-            <label className="block mb-1">Max Processing Fee:</label>
-            <input 
-              type="number" 
-              name="maxProcessingFee" 
-              value={filters.maxProcessingFee} 
-              onChange={handleChange} 
-              className="w-full p-2 border text-black border-gray-300 rounded"
-            />
-          </div>
+          <Range label="Min Interest Rate" filterQuery={filterQuery} handleChange={handleChange} min={0} max={100} name="minInterestRate" step={"0.5"} value={filterQuery.minInterestRate || 0} unit={"%"}/>
+          <Range label="Max Interest Rate" filterQuery={filterQuery} handleChange={handleChange} min={0} max={100} name="maxInterestRate" step={"0.5"} value={filterQuery.maxInterestRate || 0} unit={"%"}/>
+          <Range label="Min Loan Amount" filterQuery={filterQuery} handleChange={handleChange} min={0} max={10000000} step={"10000"} name="minLoanAmount" value={filterQuery.minLoanAmount || 0} unit={"₹"}/>
+          <Range label="Max Loan Amount" filterQuery={filterQuery} handleChange={handleChange} min={0} max={10000000} step={"10000"} name="maxLoanAmount" value={filterQuery.maxLoanAmount || 0} unit={"₹"}/>
+          <Range label="Min Tenure" filterQuery={filterQuery} handleChange={handleChange} min={0} max={120} name="minTenure" value={filterQuery.minTenure || 0} unit={"months"}/>
+          <Range label="Max Tenure" filterQuery={filterQuery} handleChange={handleChange} min={0} max={120} name="maxTenure" value={filterQuery.maxTenure || 0} unit={"months"}/>
+          <Range label="Min Processing Fee" filterQuery={filterQuery} handleChange={handleChange} min={0} max={10000} name="minProcessingFee" value={filterQuery.minProcessingFee || 0} unit={"₹"} step={"500"}/>
+          <Range label="Max Processing Fee" filterQuery={filterQuery} handleChange={handleChange} min={0} max={10000} name="maxProcessingFee" value={filterQuery.maxProcessingFee || 0} unit={"₹"} step={"500"}/>
           <Button label={"Apply Filters"} className={"text-xl"}/>
         </form>
       </div>

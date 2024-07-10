@@ -4,11 +4,10 @@ import { calculateRank, updateLoanValues } from "./utils/loanHelpers.js"
 
 export const getAllLoans = async (req, res) => {
     try {
-        const loans = await Loan.find({}).populate('bank').sort({
-            rank: "asc"
-        })
-
+        const loans = await Loan.find({}).populate('bank')
+        loans.sort((a, b) => a.rank - b.rank)
         res.status(200)
+        
         return res.json({
             loans
         })
@@ -101,18 +100,12 @@ export const updateLoans = async(req, res) => {
             const updatedLoan = updateLoanValues(loan)
             return updatedLoan
         })
-        const loanTypes = [...new Set(updatedLoans.map(loan => loan.loanType))]
-        for (const type of loanTypes) {
-            const loansOfType = updatedLoans.filter(loan => loan && loan.loanType === type)
-            loansOfType.sort((a, b) => calculateRank(a) - calculateRank(b))
-            for(let i=0; i < loansOfType.length; i++){
-                loansOfType[i].rank = i + 1
-                await Loan.updateOne({ _id: loansOfType[i]._id }, { rank: i + 1 })
-            }
-        }
+        const rankedLoans = updatedLoans.sort((a, b) => a.rank - b.rank)
+        await Loan.bulkSave(updatedLoans)
         res.status(200)
         return res.json({
-            message: 'Loan Information Updated'
+            message: 'Loan Information Updated',
+            rankedLoans
         })
     } catch(error){
         res.status(500)

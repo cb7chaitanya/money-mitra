@@ -5,5 +5,5 @@ import { getAllLoans, createLoan, createBank, updateLoans, filterLoans } from '.
 loanRouter.post('/create-bank', createBank)
 loanRouter.post('/create-loan', createLoan)
 loanRouter.get('/loans', getAllLoans)
-loanRouter.patch('/update-loans', updateLoans)
+loanRouter.put('/update-loans', updateLoans)
 loanRouter.get('/loans/filter', filterLoans)

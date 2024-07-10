@@ -17,8 +17,8 @@ const Loan = () => {
     const fetchLoans = async () => {
       try {
         const response = await axios.get(`${BASE_URL}/loan/loans`);
-        setLoans(response.data.loans);
         console.log(response.data.loans)
+        setLoans(response.data.loans);
         setTimeout(() => {
           setLoading(false)
         }, 2000)
@@ -29,7 +29,7 @@ const Loan = () => {
     fetchLoans();
     console.log(loans)
   }, [])
-  
+
   return (
     <div className='h-screen overflow-auto w-full bg-zinc-950 flex flex-col'>
       <div className='mt-8'></div>
@@ -38,7 +38,7 @@ const Loan = () => {
           <TabSwitcher />
         </div>
         <div className='fixed top-12'>
-          <LoanFilterSidebar />
+          <LoanFilterSidebar onLoansFetched={setLoans}/>
         </div>
       </div>
     {loading === true ? <div className='flex flex-col-2 justify-center items-center mt-16'><Skeleton /><Skeleton /><Skeleton /></div> : <div className='flex flex-col justify-center items-center text-white mt-16'>

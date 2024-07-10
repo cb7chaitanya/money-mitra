@@ -4,6 +4,8 @@ export const updateLoanValues = (loan) => {
     loan.minLoanAmount = loan.minLoanAmount + amountVariation
     loan.maxLoanAmount = loan.maxLoanAmount + amountVariation
     loan.processingFee = loan.processingFee + amountVariation
+    const rankCalculated = calculateRank(loan)
+    loan.rank = rankCalculated
     return loan
 }
 
@@ -18,6 +20,5 @@ export const calculateRank = (loan) => {
     (loan.processingFee * processingFeeWeight) + 
     (loan.tenure * tenureWeight) +
     (documentsRequiredLength * documentsRequiredWeight)
-
     return rank;
 }
