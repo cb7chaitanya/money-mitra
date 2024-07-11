@@ -15,10 +15,9 @@ const AuthForm = ({type}) => {
     const navigate = useNavigate()
     const handleSubmit = async() => {
         try{
-            const response = await axios.post(`${BASE_URL}/user/${type}`, postInputs)
-            console.log(response)
-            const jwt = response.data.token
-            localStorage.setItem("Authorization", `Bearer ${jwt}`)
+            await axios.post(`${BASE_URL}/user/${type}`, postInputs, {
+                withCredentials: true
+            })
             navigate('/dashboard')
         } catch(error) {
             console.error(error)

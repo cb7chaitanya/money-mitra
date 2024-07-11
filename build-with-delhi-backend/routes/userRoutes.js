@@ -4,4 +4,3 @@ import {signup, signin} from '../controllers/userControlllers.js'
 
 userRouter.post('/signup', signup)
 userRouter.post('/signin', signin)
-

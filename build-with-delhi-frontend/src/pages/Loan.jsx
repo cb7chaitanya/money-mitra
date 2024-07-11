@@ -16,7 +16,9 @@ const Loan = () => {
   useEffect(() => {
     const fetchLoans = async () => {
       try {
-        const response = await axios.get(`${BASE_URL}/loan/loans`);
+        const response = await axios.get(`${BASE_URL}/loan/loans`, {
+          withCredentials: true
+        });
         console.log(response.data.loans)
         setLoans(response.data.loans);
         setTimeout(() => {

@@ -27,6 +27,7 @@ const Stock = () => {
     fetchStocks();
     console.log(mostActive)
   }, [mostActive])
+  
   return (
     <div className='h-screen w-full bg-zinc-950 flex flex-col'>
       <div className='mt-8'></div>

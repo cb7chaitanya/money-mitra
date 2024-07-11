@@ -1,16 +1,27 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Button from './Button'
 import { BASE_URL } from '../../config/conf';
-import { useSetRecoilState, useRecoilValue } from 'recoil';
-import { loansAtom, updateFilterQuerySelctor } from '../store/atoms/loans';
+import { useSetRecoilState, useRecoilValue, useRecoilState } from 'recoil';
+import { loansAtom, updateFilterQuerySelctor, filterQueryAtom } from '../store/atoms/loans';
 import Range from './Range';
 
 const LoanFilterSidebar = ({ onLoansFetched }) => {
   const filterQuery = useRecoilValue(updateFilterQuerySelctor)
   const setFilterQuery = useSetRecoilState(updateFilterQuerySelctor)
   const setLoans = useSetRecoilState(loansAtom)
+  const [query, setQuery] = useRecoilState(filterQueryAtom)
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [resetFilter, setResetFilter] = useState(false);
+
+  const handleReset = async (e) => {
+    setResetFilter(true);
+    useEffect(() => {
+      if (resetFilter === true) {
+        handleSubmit(e);
+      }
+    }, [resetFilter]);
+  }
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -21,9 +32,21 @@ const LoanFilterSidebar = ({ onLoansFetched }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.get(`${BASE_URL}/loan/loans/filter`, { params: filterQuery });
-      onLoansFetched(response.data.loans);
-      setLoans(response.data.loans)
+      if(resetFilter === true){
+        const response = await axios.get(`${BASE_URL}/loan/loans/filter`, { params: '',
+          withCredentials: true
+        });
+        onLoansFetched(response.data.loans);
+        setLoans(response.data.loans)
+        setResetFilter(false)
+      }
+      else {
+        const response = await axios.get(`${BASE_URL}/loan/loans/filter`, { params: filterQuery,
+          withCredentials: true
+        });
+        onLoansFetched(response.data.loans);
+        setLoans(response.data.loans)
+      }
     } catch (error) {
       console.error('Error fetching loans:', error);
     }
@@ -72,6 +95,7 @@ const LoanFilterSidebar = ({ onLoansFetched }) => {
           <Range label="Max Processing Fee" filterQuery={filterQuery} handleChange={handleChange} min={0} max={10000} name="maxProcessingFee" value={filterQuery.maxProcessingFee || 0} unit={"₹"} step={"500"}/>
           <Button label={"Apply Filters"} className={"text-xl"}/>
         </form>
+        <Button label={"Reset"} onClick={handleReset} className={"text-xl"}/>
       </div>
       {isSidebarOpen && <div className="fixed inset-0 bg-black opacity-50 z-20" onClick={toggleSidebar}></div>}
     </div>

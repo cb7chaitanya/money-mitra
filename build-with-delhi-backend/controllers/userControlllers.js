@@ -35,8 +35,10 @@ export const signup = async (req, res) => {
             email: email, 
             password: hashedPassword
          })
+        const token = jwt.sign({ userId: user._id }, jwtSecret)
+        res.cookie('auth-token', token)
         return res.json({
-            token: jwt.sign({ userId: user._id }, jwtSecret)
+            msg: "Signed up Successfully",
         })
     } catch (error) {
         res.status(500)
@@ -67,10 +69,9 @@ export const signin = async (req, res) => {
             }
             else{
                 const token = jwt.sign({userId: isAlreadyUser._id}, jwtSecret)
-                res.status(200)
-                return res.json({
+                res.cookie('auth-token', token)
+                return res.status(200).json({
                     message: 'Authorized User, Valid Credentials!!!',
-                    token
                 })
             }
         } else {
